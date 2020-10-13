@@ -1,0 +1,428 @@
+{
+  "name": "impression",
+  "nodes": [
+    {
+      "parameters": {},
+      "name": "Start",
+      "type": "n8n-nodes-base.start",
+      "typeVersion": 1,
+      "position": [
+        240,
+        410
+      ]
+    },
+    {
+      "parameters": {},
+      "name": "No Result",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        940,
+        720
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{!Object.keys($node[\"Remove Duplicate Value\"].data).length}}"
+            }
+          ],
+          "string": []
+        }
+      },
+      "name": "New value ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        940,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "removeKeyMatches",
+        "propertyName1": "id",
+        "propertyName2": "id"
+      },
+      "name": "Remove Duplicate Value",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 1,
+      "position": [
+        780,
+        560
+      ],
+      "notesInFlow": false,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "functionCode": "const newItems = [];\n\nitems[0]['json']['data'].map(item => {\n  newItems.push({json: {\n    'id': `${newItems.length+1}`\n  }});\n})\n\nreturn newItems;\n"
+      },
+      "name": "Rename data archive",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        600,
+        630
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "functionCode": "const newItems = [];\n\nitems[0]['json']['data'].map(item => {\n  newItems.push({json: {\n    'id': `${newItems.length+1}`,\n    'client': item[0],\n    'dossier': item[1],\n    'date': item[2],\n    'type': item[3],\n    'taille-couleur': item[4],\n    'qts': item[5],\n    'commentaire': item[6] || \"\"\n  }});\n})\n/*\nnewItems.push({json: {\n  'id': `${newItems.length+1}`,\n  'client': \"client\",\n  'dossier': \"dossier\",\n  'date': \"date\",\n  'type': \"aaaa\",\n  'taille-couleur': \"taille-couleur\",\n  'qts': \"qts\",\n  'commentaire': \"commentaire\"\n}})\n*/\nreturn newItems;\n"
+      },
+      "name": "Rename data impression",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        600,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "sheetId": "16tIsU7OzOt7T9KtluUX1E-ww4Z1HiCkkxxrTAdbK8Uc",
+        "range": "=A7:G1000",
+        "rawData": true,
+        "options": {
+          "valueRenderMode": "FORMATTED_VALUE"
+        }
+      },
+      "name": "Google Sheets Impression",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 1,
+      "position": [
+        390,
+        480
+      ],
+      "alwaysOutputData": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": "Google Sheets OAuth2 API"
+      }
+    },
+    {
+      "parameters": {
+        "triggerTimes": {
+          "item": [
+            {
+              "mode": "everyX",
+              "value": 5,
+              "unit": "minutes"
+            }
+          ]
+        }
+      },
+      "name": "Cron",
+      "type": "n8n-nodes-base.cron",
+      "typeVersion": 1,
+      "position": [
+        240,
+        550
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "update",
+        "sheetId": "1Hz7dAcZ3Z_bJ_DiHsqK6M12o8tFJuTVjo_cYesithv0",
+        "range": "A:G",
+        "rawData": true,
+        "options": {}
+      },
+      "name": "Google Sheets Archive1",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 1,
+      "position": [
+        1380,
+        750
+      ],
+      "alwaysOutputData": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": "Google Sheets OAuth2 API"
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "sheetId": "16tIsU7OzOt7T9KtluUX1E-ww4Z1HiCkkxxrTAdbK8Uc",
+        "range": "=A7:G1000",
+        "rawData": true,
+        "options": {
+          "valueRenderMode": "FORMATTED_VALUE"
+        }
+      },
+      "name": "Google Sheets Impression1",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 1,
+      "position": [
+        1170,
+        750
+      ],
+      "alwaysOutputData": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": "Google Sheets OAuth2 API"
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "sheetId": "1Hz7dAcZ3Z_bJ_DiHsqK6M12o8tFJuTVjo_cYesithv0",
+        "range": "A:G",
+        "rawData": true,
+        "options": {
+          "valueRenderMode": "FORMATTED_VALUE"
+        }
+      },
+      "name": "Google Sheets Archive2",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 1,
+      "position": [
+        390,
+        630
+      ],
+      "alwaysOutputData": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": "Google Sheets OAuth2 API"
+      }
+    },
+    {
+      "parameters": {
+        "listId": "5d81f381b1f22744f25fca79",
+        "name": "={{$node[\"New value ?\"].json[\"client\"].trim()}} {{$node[\"New value ?\"].json[\"dossier\"].trim()}}",
+        "description": "=client: {{$node[\"New value ?\"].json[\"client\"]}}\ncommentaire: {{$node[\"New value ?\"].json[\"commentaire\"]}}\ndate: {{$node[\"New value ?\"].json[\"date\"]}}\ndossier: {{$node[\"New value ?\"].json[\"dossier\"]}}\nid: {{$node[\"New value ?\"].json[\"id\"]}}\nqts: {{$node[\"New value ?\"].json[\"qts\"]}}\ntaille-couleur: {{$node[\"New value ?\"].json[\"taille-couleur\"]}}\ntype: {{$node[\"New value ?\"].json[\"type\"]}}",
+        "additionalFields": {
+          "idLabels": "={{$node[\"Merge1\"].json[\"id\"]}}"
+        }
+      },
+      "name": "Trello",
+      "type": "n8n-nodes-base.trello",
+      "typeVersion": 1,
+      "position": [
+        1670,
+        560
+      ],
+      "credentials": {
+        "trelloApi": "Trello API"
+      }
+    },
+    {
+      "parameters": {
+        "resource": "label",
+        "boardId": "5d81f381b1f22744f25fca78",
+        "additionalFields": {}
+      },
+      "name": "Trello1",
+      "type": "n8n-nodes-base.trello",
+      "typeVersion": 1,
+      "position": [
+        1170,
+        600
+      ],
+      "credentials": {
+        "trelloApi": "Trello API"
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "const label = [];\n\nitems.map(item => {\n  label.push({json: {\n    'id': item.json.id,\n    'name': item.json.name\n  }});\n})\n\nreturn label;\n"
+      },
+      "name": "Rename data archive1",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        1310,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "mergeByKey",
+        "propertyName1": "name",
+        "propertyName2": "name"
+      },
+      "name": "Merge1",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 1,
+      "position": [
+        1500,
+        560
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "functionCode": "/*\nreturn [\n  {json: {\n    'name': 'flex'\n  }}\n]\n*/\nconst label = [];\n\nitems.map(item => {\n  label.push({json: {\n    //'id': item.json.id,\n    'name': item.json.type\n  }});\n})\n\nreturn label;\n"
+      },
+      "name": "Rename data archive2",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        1170,
+        470
+      ]
+    }
+  ],
+  "connections": {
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets Impression",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "New value ?": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets Impression1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Rename data archive2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remove Duplicate Value": {
+      "main": [
+        [
+          {
+            "node": "New value ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rename data archive": {
+      "main": [
+        [
+          {
+            "node": "Remove Duplicate Value",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Rename data impression": {
+      "main": [
+        [
+          {
+            "node": "Remove Duplicate Value",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets Impression": {
+      "main": [
+        [
+          {
+            "node": "Rename data impression",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cron": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets Impression",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets Impression1": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets Archive1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets Archive2": {
+      "main": [
+        [
+          {
+            "node": "Rename data archive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trello1": {
+      "main": [
+        [
+          {
+            "node": "Rename data archive1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rename data archive1": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Rename data archive2": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Trello",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "id": "4"
+}
